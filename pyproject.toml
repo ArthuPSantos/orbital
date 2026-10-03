@@ -1,0 +1,21 @@
+[project]
+name = "orbital"
+version = "0.1.0"
+description = "Computational laboratory for gravitational systems"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
