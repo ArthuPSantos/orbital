@@ -126,17 +126,17 @@ The engine uses Newton's law of universal gravitation.
 For two bodies:
 
 $$
-F = G \frac{m_1m_2}{r^2}
+F = G\frac{m_1m_2}{r^2}
 $$
 
 where:
 
-* \(F\) is the gravitational force
-* \(G\) is the gravitational constant
-* \(m_1\) and \(m_2\) are the masses
-* \(r\) is the distance between the bodies
+* $F$ is the gravitational force
+* $G$ is the gravitational constant
+* $m_1$ and $m_2$ are the masses
+* $r$ is the distance between the bodies
 
-The acceleration of body \(i\) caused by body \(j\) is:
+The acceleration of body $i$ caused by body $j$ is:
 
 $$
 \vec{a}_{ij}
@@ -149,7 +149,8 @@ $$
 For an N-body system, the total acceleration is the sum of the contributions from all other bodies:
 
 $$
-\vec{a}_i =
+\vec{a}_i
+=
 G
 \sum_{j\neq i}
 m_j
@@ -157,7 +158,7 @@ m_j
 {|\vec{r}_j-\vec{r}_i|^3}
 $$
 
-This produces an \(O(N^2)\) algorithm because every body can interact with every other body.
+This produces an $O(N^2)$ algorithm because every body can interact with every other body.
 
 ---
 
@@ -187,14 +188,15 @@ $$
 \vec{v}_t
 +
 \frac{1}{2}
-(\vec{a}_t+\vec{a}_{t+\Delta t})
+\left(
+\vec{a}_t+\vec{a}_{t+\Delta t}
+\right)
 \Delta t
 $$
 
 The implementation separates the integration contract from the concrete `VelocityVerlet` implementation through a protocol.
 
 This makes it possible to introduce alternative integrators in the future without coupling them directly to the simulation engine.
-
 ---
 
 ## Numerical Validation
