@@ -1,4 +1,3 @@
-import numpy as np
 
 from orbital.physics.body import Body
 from orbital.physics.energy import (

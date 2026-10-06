@@ -1,9 +1,9 @@
 import numpy as np
 
-from orbital.simulation.engine import SimulationEngine
-from orbital.simulation.state import SimulationState
 from orbital.physics.body import Body
 from orbital.physics.gravity import gravitational_acceleration
+from orbital.simulation.engine import SimulationEngine
+from orbital.simulation.state import SimulationState
 
 
 def test_three_body_internal_forces_conserve_momentum():
@@ -128,9 +128,8 @@ def test_three_body_momentum_and_angular_momentum_are_conserved():
 
     import numpy as np
 
-    from orbital.physics.body import Body
-    from orbital.physics.gravity import GRAVITATIONAL_CONSTANT
     from orbital.physics.angular_momentum import total_angular_momentum
+    from orbital.physics.body import Body
     from orbital.simulation.engine import SimulationEngine
     from orbital.simulation.state import SimulationState
 

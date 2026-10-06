@@ -1,12 +1,12 @@
 import numpy as np
 
-from orbital.physics.orbit import circular_orbit_state
+from orbital.physics.angular_momentum import total_angular_momentum
 from orbital.physics.body import Body
+from orbital.physics.gravity import GRAVITATIONAL_CONSTANT
+from orbital.physics.orbit import circular_orbit_state
+from orbital.physics.total_energy import total_energy
 from orbital.simulation.engine import SimulationEngine
 from orbital.simulation.state import SimulationState
-from orbital.physics.total_energy import total_energy
-from orbital.physics.angular_momentum import total_angular_momentum
-from orbital.physics.gravity import GRAVITATIONAL_CONSTANT
 
 
 def test_circular_orbit():
@@ -60,6 +60,7 @@ def test_circular_orbit():
         rtol=1e-3,
     )
 
+
 def test_circular_orbit_remains_stable():
     """A órbita deve permanecer estável ao longo de aproximadamente um ano."""
 
@@ -112,20 +113,13 @@ def test_circular_orbit_remains_stable():
         rtol=0.05,
     )
 
+
 def test_circular_orbit_has_zero_center_of_mass():
     """O sistema orbital deve ter o centro de massa na origem."""
-
-    from orbital.physics.orbit import circular_orbit_velocities
 
     mass_a = 2.0e30
     mass_b = 1.0e30
     separation = 1.0e11
-
-    velocity_a, velocity_b = circular_orbit_velocities(
-        mass_a,
-        mass_b,
-        separation,
-    )
 
     total_mass = mass_a + mass_b
 
@@ -204,6 +198,7 @@ def test_circular_orbit_preserves_requested_separation():
         separation,
     )
 
+
 def test_circular_orbit_state_has_zero_center_of_mass():
     """O estado orbital deve possuir centro de massa na origem."""
 
@@ -274,7 +269,8 @@ def test_circular_orbit_state_preserves_separation():
     assert np.isclose(
         actual_separation,
         separation,
-    )    
+    )
+
 
 def test_two_body_circular_orbit_remains_stable():
     """Uma órbita circular de dois corpos deve permanecer estável."""
@@ -334,6 +330,7 @@ def test_two_body_circular_orbit_remains_stable():
         rtol=0.05,
     )
 
+
 def test_two_body_circular_orbit_conserves_energy():
     """A energia mecânica deve permanecer aproximadamente constante."""
 
@@ -388,6 +385,7 @@ def test_two_body_circular_orbit_conserves_energy():
     )
 
     assert relative_error < 1e-3
+
 
 def test_two_body_circular_orbit_conserves_angular_momentum():
     """O momento angular deve permanecer aproximadamente constante."""

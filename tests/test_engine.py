@@ -1,5 +1,6 @@
-import pytest
 import numpy as np
+import pytest
+
 from orbital.physics.body import Body
 from orbital.simulation.engine import SimulationEngine
 from orbital.simulation.state import SimulationState

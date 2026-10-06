@@ -12,11 +12,13 @@ Exemplos de coisas que podem ser alteradas:
     - velocidade inicial
     - duração da simulação
     - intervalo de tempo (dt)
+    - frequência de amostragem da energia
 
 Depois de alterar alguma configuração, execute:
 
     python examples/two_body.py
 """
+
 
 
 # ============================================================
@@ -79,7 +81,7 @@ PLANET_POSITION = [1.496e11, 0.0]
 #
 # Exemplo:
 #
-#     [0.0, 29780.0]
+#     [0.0, 29_780.0]
 #
 # significa:
 #
@@ -150,6 +152,32 @@ SIMULATION_DAYS = 365
 #     - pode aumentar o erro numérico
 #     - pode comprometer a estabilidade
 #
-# Para este experimento, 1 dia é um bom ponto inicial.
+# Para este experimento, 6 horas é um bom ponto inicial.
 
 DT = 21_600.0
+
+
+# ============================================================
+# AMOSTRAGEM DE ENERGIA
+# ============================================================
+# Define de quanto em quanto tempo a energia do sistema será
+# registrada durante o experimento.
+#
+# Isso NÃO altera a simulação.
+#
+# O DT continua sendo o responsável por controlar os passos
+# da integração.
+#
+# ENERGY_SAMPLE_DAYS controla apenas a frequência com que
+# observamos e registramos a energia.
+#
+# Exemplo:
+#
+#     30 -> registra a energia a cada 30 dias
+#
+# Um intervalo menor gera mais pontos no histórico.
+#
+# Um intervalo maior gera menos pontos e reduz a quantidade
+# de dados armazenados.
+
+ENERGY_SAMPLE_DAYS = 30

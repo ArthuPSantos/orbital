@@ -2,7 +2,6 @@ import numpy as np
 
 from orbital.physics.body import Body
 
-
 # Constante gravitacional universal.
 # Unidade: m³ kg⁻¹ s⁻²
 GRAVITATIONAL_CONSTANT = 6.67430e-11

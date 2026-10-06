@@ -1,9 +1,9 @@
 import numpy as np
 
+from orbital.physics.body import Body
 from orbital.physics.integrator_protocol import StepResult
 from orbital.simulation.engine import SimulationEngine
 from orbital.simulation.state import SimulationState
-from orbital.physics.body import Body
 
 
 class FakeIntegrator:

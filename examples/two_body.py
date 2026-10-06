@@ -12,9 +12,9 @@ modificar o código responsável pela simulação.
 """
 
 import numpy as np
-
 from two_body_config import (
     DT,
+    ENERGY_SAMPLE_DAYS,
     PLANET_MASS,
     PLANET_POSITION,
     PLANET_VELOCITY,
@@ -29,323 +29,304 @@ from orbital.physics.total_energy import total_energy
 from orbital.simulation.engine import SimulationEngine
 from orbital.simulation.state import SimulationState
 
-
-# ============================================================
-# CONSTANTES DO EXPERIMENTO
-# ============================================================
-
 SECONDS_PER_DAY = 86_400
 
-# Intervalo entre as medições de energia.
-#
-# Exemplo:
-#
-#     ENERGY_SAMPLE_DAYS = 30
-#
-# significa que registraremos a energia a cada 30 dias.
-#
-# Isso é diferente do DT.
-#
-# DT controla a simulação.
-#
-# ENERGY_SAMPLE_DAYS controla apenas a frequência
-# com que observamos a simulação.
 
-ENERGY_SAMPLE_DAYS = 30
+def run_experiment() -> dict[str, object]:
+    """
+    Executa o experimento de dois corpos.
 
+    Retorna os principais resultados da simulação para que
+    outras partes do projeto possam utilizá-los sem precisar
+    executar novamente toda a lógica.
 
-# ============================================================
-# CONVERSÃO DE TEMPO
-# ============================================================
+    Returns:
+        Dicionário contendo:
+            - estado final da simulação;
+            - histórico de energia;
+            - histórico de tempo;
+            - trajetória da estrela;
+            - trajetória do planeta;
+            - energia inicial;
+            - energia final;
+            - erro relativo de energia;
+            - distância entre posição inicial e final;
+            - número de passos executados.
+    """
 
-simulation_seconds = (
-    SIMULATION_DAYS
-    * SECONDS_PER_DAY
-)
-
-energy_sample_seconds = (
-    ENERGY_SAMPLE_DAYS
-    * SECONDS_PER_DAY
-)
-
-
-# ============================================================
-# VALIDAÇÃO
-# ============================================================
-
-if simulation_seconds % DT != 0:
-    raise ValueError(
-        "DT deve dividir exatamente a duração da simulação. "
-        "Altere SIMULATION_DAYS ou DT no two_body_config.py."
+    simulation_seconds = (
+        SIMULATION_DAYS
+        * SECONDS_PER_DAY
     )
 
-if energy_sample_seconds % DT != 0:
-    raise ValueError(
-        "ENERGY_SAMPLE_DAYS deve representar uma quantidade "
-        "de passos compatível com DT."
+    energy_sample_seconds = (
+        ENERGY_SAMPLE_DAYS
+        * SECONDS_PER_DAY
     )
 
+    if simulation_seconds % DT != 0:
+        raise ValueError(
+            "DT deve dividir exatamente a duração da simulação. "
+            "Altere SIMULATION_DAYS ou DT no two_body_config.py."
+        )
 
-# Quantidade total de passos da simulação.
+    if energy_sample_seconds % DT != 0:
+        raise ValueError(
+            "ENERGY_SAMPLE_DAYS deve representar uma quantidade "
+            "de passos compatível com DT."
+        )
 
-steps = int(
-    simulation_seconds / DT
-)
-
-
-# Quantidade de passos entre cada medição de energia.
-
-energy_sample_steps = int(
-    energy_sample_seconds / DT
-)
-
-
-# ============================================================
-# CRIAÇÃO DOS CORPOS
-# ============================================================
-
-star = Body(
-    mass=STAR_MASS,
-    position=np.array(
-        STAR_POSITION,
-        dtype=float,
-    ),
-    velocity=np.array(
-        STAR_VELOCITY,
-        dtype=float,
-    ),
-    radius=6.9634e8,
-)
-
-planet = Body(
-    mass=PLANET_MASS,
-    position=np.array(
-        PLANET_POSITION,
-        dtype=float,
-    ),
-    velocity=np.array(
-        PLANET_VELOCITY,
-        dtype=float,
-    ),
-    radius=6.371e6,
-)
-
-
-# ============================================================
-# ESTADO DA SIMULAÇÃO
-# ============================================================
-
-state = SimulationState(
-    bodies=[star, planet],
-)
-
-
-# ============================================================
-# MOTOR DA SIMULAÇÃO
-# ============================================================
-
-engine = SimulationEngine(
-    state=state,
-    dt=DT,
-)
-
-
-# ============================================================
-# ESTADO INICIAL
-# ============================================================
-
-initial_position = planet.position.copy()
-
-initial_energy = total_energy(
-    state.bodies,
-)
-
-
-# ============================================================
-# HISTÓRICO DE ENERGIA
-# ============================================================
-# Guardamos os resultados para analisar o comportamento da
-# energia durante toda a simulação.
-#
-# Cada item será:
-#
-#     (tempo_em_dias, energia, erro_relativo)
-
-energy_history: list[
-    tuple[float, float, float]
-] = []
-
-energy_history.append(
-    (
-        0.0,
-        initial_energy,
-        0.0,
+    steps = int(
+        simulation_seconds / DT
     )
-)
 
+    energy_sample_steps = int(
+        energy_sample_seconds / DT
+    )
 
-# ============================================================
-# INFORMAÇÕES DO EXPERIMENTO
-# ============================================================
+    star = Body(
+        mass=STAR_MASS,
+        position=np.array(
+            STAR_POSITION,
+            dtype=float,
+        ),
+        velocity=np.array(
+            STAR_VELOCITY,
+            dtype=float,
+        ),
+        radius=6.9634e8,
+    )
 
-print("=" * 60)
-print("ORBITAL — EXPERIMENTO DE DOIS CORPOS")
-print("=" * 60)
+    planet = Body(
+        mass=PLANET_MASS,
+        position=np.array(
+            PLANET_POSITION,
+            dtype=float,
+        ),
+        velocity=np.array(
+            PLANET_VELOCITY,
+            dtype=float,
+        ),
+        radius=6.371e6,
+    )
 
-print("\nCONFIGURAÇÃO")
-print("-" * 60)
+    state = SimulationState(
+        bodies=[star, planet],
+    )
 
-print(
-    f"Duração: {SIMULATION_DAYS} dias"
-)
+    engine = SimulationEngine(
+        state=state,
+        dt=DT,
+    )
 
-print(
-    f"Intervalo DT: {DT:.0f} segundos"
-)
+    initial_position = planet.position.copy()
 
-print(
-    f"Número de passos: {steps}"
-)
+    initial_energy = total_energy(
+        state.bodies,
+    )
 
-print(
-    f"Amostragem de energia: "
-    f"a cada {ENERGY_SAMPLE_DAYS} dias"
-)
+    energy_history: list[
+        tuple[float, float, float]
+    ] = [
+        (
+            0.0,
+            initial_energy,
+            0.0,
+        )
+    ]
 
-print("\nESTADO INICIAL")
-print("-" * 60)
+    trajectory_times = [0.0]
 
-print(
-    f"Tempo: "
-    f"{state.time / SECONDS_PER_DAY:.1f} dias"
-)
+    trajectory_star = [
+        star.position.copy()
+    ]
 
-print(
-    "Posição do planeta:",
-    planet.position,
-)
+    trajectory_planet = [
+        planet.position.copy()
+    ]
 
-print(
-    "Velocidade do planeta:",
-    planet.velocity,
-)
+    for step in range(1, steps + 1):
 
-print(
-    f"Energia total: "
-    f"{initial_energy:.6e} J",
-)
+        engine.step()
 
-
-# ============================================================
-# SIMULAÇÃO
-# ============================================================
-
-for step in range(1, steps + 1):
-
-    engine.step()
-
-    # Verifica se chegou ao momento de registrar
-    # uma nova medição de energia.
-
-    if step % energy_sample_steps == 0:
-
-        current_energy = total_energy(
-            state.bodies,
+        trajectory_times.append(
+            state.time / SECONDS_PER_DAY
         )
 
-        relative_error = abs(
-            (current_energy - initial_energy)
-            / initial_energy
+        trajectory_star.append(
+            star.position.copy()
         )
 
-        current_time_days = (
-            state.time
-            / SECONDS_PER_DAY
+        trajectory_planet.append(
+            planet.position.copy()
         )
 
-        energy_history.append(
-            (
-                current_time_days,
-                current_energy,
-                relative_error,
+        if step % energy_sample_steps == 0:
+
+            current_energy = total_energy(
+                state.bodies,
             )
-        )
+
+            relative_error = abs(
+                (current_energy - initial_energy)
+                / initial_energy
+            )
+
+            current_time_days = (
+                state.time
+                / SECONDS_PER_DAY
+            )
+
+            energy_history.append(
+                (
+                    current_time_days,
+                    current_energy,
+                    relative_error,
+                )
+            )
+
+    final_energy = total_energy(
+        state.bodies,
+    )
+
+    position_difference = np.linalg.norm(
+        planet.position - initial_position,
+    )
+
+    energy_relative_error = abs(
+        (final_energy - initial_energy)
+        / initial_energy
+    )
+
+    return {
+        "state": state,
+        "energy_history": energy_history,
+        "trajectory_times": trajectory_times,
+        "trajectory_star": trajectory_star,
+        "trajectory_planet": trajectory_planet,
+        "initial_energy": initial_energy,
+        "final_energy": final_energy,
+        "energy_relative_error": energy_relative_error,
+        "position_difference": position_difference,
+        "steps": steps,
+    }
 
 
-# ============================================================
-# RESULTADO FINAL
-# ============================================================
+def print_results(results: dict[str, object]) -> None:
+    """
+    Exibe no terminal os resultados do experimento.
 
-final_energy = total_energy(
-    state.bodies,
-)
+    Args:
+        results: Resultados retornados por run_experiment().
+    """
 
-position_difference = np.linalg.norm(
-    planet.position - initial_position,
-)
+    state = results["state"]
+    energy_history = results["energy_history"]
+    initial_energy = results["initial_energy"]
+    energy_relative_error = results["energy_relative_error"]
+    position_difference = results["position_difference"]
+    steps = results["steps"]
 
-energy_relative_error = abs(
-    (final_energy - initial_energy)
-    / initial_energy
-)
+    print("=" * 60)
+    print("ORBITAL — EXPERIMENTO DE DOIS CORPOS")
+    print("=" * 60)
 
-
-# ============================================================
-# HISTÓRICO DE ENERGIA
-# ============================================================
-
-print("\nHISTÓRICO DE ENERGIA")
-print("-" * 60)
-
-print(
-    f"{'Tempo (dias)':>15}"
-    f"{'Energia (J)':>25}"
-    f"{'Erro relativo':>20}"
-)
-
-for (
-    time_days,
-    energy,
-    relative_error,
-) in energy_history:
+    print("\nCONFIGURAÇÃO")
+    print("-" * 60)
 
     print(
-        f"{time_days:>15.1f}"
-        f"{energy:>25.6e}"
-        f"{relative_error:>20.6e}"
+        f"Duração: {SIMULATION_DAYS} dias"
     )
 
+    print(
+        f"Intervalo DT: {DT:.0f} segundos"
+    )
 
-# ============================================================
-# RESULTADO FINAL
-# ============================================================
+    print(
+        f"Número de passos: {steps}"
+    )
 
-print("\nRESULTADO FINAL")
-print("-" * 60)
+    print(
+        f"Amostragem de energia: "
+        f"a cada {ENERGY_SAMPLE_DAYS} dias"
+    )
 
-print(
-    f"Tempo: "
-    f"{state.time / SECONDS_PER_DAY:.1f} dias"
-)
+    print("\nESTADO INICIAL")
+    print("-" * 60)
 
-print(
-    "Posição do planeta:",
-    planet.position,
-)
+    print(
+        "Tempo: 0.0 dias"
+    )
 
-print(
-    "Velocidade do planeta:",
-    planet.velocity,
-)
+    print(
+        "Posição do planeta:",
+        PLANET_POSITION,
+    )
 
-print(
-    f"Distância entre posição inicial e final: "
-    f"{position_difference:.6e} m"
-)
+    print(
+        "Velocidade do planeta:",
+        PLANET_VELOCITY,
+    )
 
-print(
-    f"Erro relativo de energia: "
-    f"{energy_relative_error:.6e}"
-)
+    print(
+        f"Energia total: "
+        f"{initial_energy:.6e} J",
+    )
 
-print("\n" + "=" * 60)
+    print("\nHISTÓRICO DE ENERGIA")
+    print("-" * 60)
+
+    print(
+        f"{'Tempo (dias)':>15}"
+        f"{'Energia (J)':>25}"
+        f"{'Erro relativo':>20}"
+    )
+
+    for (
+        time_days,
+        energy,
+        relative_error,
+    ) in energy_history:
+
+        print(
+            f"{time_days:>15.1f}"
+            f"{energy:>25.6e}"
+            f"{relative_error:>20.6e}"
+        )
+
+    print("\nRESULTADO FINAL")
+    print("-" * 60)
+
+    print(
+        f"Tempo: "
+        f"{state.time / SECONDS_PER_DAY:.1f} dias"
+    )
+
+    planet = state.bodies[1]
+
+    print(
+        "Posição do planeta:",
+        planet.position,
+    )
+
+    print(
+        "Velocidade do planeta:",
+        planet.velocity,
+    )
+
+    print(
+        f"Distância entre posição inicial e final: "
+        f"{position_difference:.6e} m"
+    )
+
+    print(
+        f"Erro relativo de energia: "
+        f"{energy_relative_error:.6e}"
+    )
+
+    print("\n" + "=" * 60)
+
+
+if __name__ == "__main__":
+    results = run_experiment()
+    print_results(results)

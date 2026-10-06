@@ -372,8 +372,14 @@ Windows:
 Install the project dependencies:
 
 ```bash
-pip install -r requirements.txt
+pip install -e ".[dev]"
 ```
+**### Optional Visualization**
+
+To install the visualization dependencies:
+
+```bash
+pip install -e ".[visualization]"
 
 Run the two-body experiment:
 
