@@ -1,3 +1,4 @@
+
 [project]
 name = "orbital"
 version = "0.1.0"
@@ -5,16 +6,14 @@ description = "Computational laboratory for gravitational systems"
 requires-python = ">=3.12"
 dependencies = [
     "numpy",
+    "matplotlib",
+    "PySide6",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest",
     "ruff",
-]
-
-visualization = [
-    "matplotlib",
 ]
 
 [tool.pytest.ini_options]
