@@ -171,18 +171,18 @@ function drawPlanet(ctx, x, y, radius) {
 }
 
 function drawCenterOfMass(ctx, x, y) {
-    ctx.strokeStyle = "rgba(154, 168, 179, 0.75)";
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(154, 168, 179, 0.9)";
+    ctx.lineWidth = 1.2;
 
     ctx.beginPath();
-    ctx.moveTo(x - 6, y);
-    ctx.lineTo(x + 6, y);
-    ctx.moveTo(x, y - 6);
-    ctx.lineTo(x, y + 6);
+    ctx.moveTo(x - 7, y);
+    ctx.lineTo(x + 7, y);
+    ctx.moveTo(x, y - 7);
+    ctx.lineTo(x, y + 7);
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.arc(x, y, 3.5, 0, Math.PI * 2);
     ctx.stroke();
 }
 
@@ -277,7 +277,15 @@ function mapPosition(point, bounds, rect) {
     return [x, y];
 }
 
-function drawPath(ctx, points, bounds, rect, color, lineWidth, endIndex = points.length - 1) {
+function drawPath(
+    ctx,
+    points,
+    bounds,
+    rect,
+    color,
+    lineWidth,
+    endIndex = points.length - 1
+) {
     if (!points.length) return;
 
     const last = Math.min(endIndex, points.length - 1);
@@ -363,17 +371,41 @@ function drawPreviewOrbitScene(ctx, width, height) {
     updateTimeline();
 }
 
+/*
+ * CORREÇÃO:
+ * O centro de massa é desenhado a partir da trajetória calculada pelo backend.
+ * Isso evita deixá-lo fixo na origem (0, 0), o que só seria correto em
+ * determinadas condições iniciais e em um referencial específico.
+ */
 function drawActualOrbitScene(ctx, width, height, data) {
     const star = coordinatesInAU(data.trajectory_star);
     const planet = coordinatesInAU(data.trajectory_planet);
+
+    const centerOfMassTrajectory = Array.isArray(
+        data.trajectory_center_of_mass
+    )
+        ? coordinatesInAU(data.trajectory_center_of_mass)
+        : [];
+
     const count = Math.min(star.length, planet.length);
 
     if (!count) return;
 
     const index = Math.min(currentIndex(), count - 1);
-    const bounds = getCoordinateBounds([star, planet]);
 
-    const padding = Math.min(42, Math.max(18, Math.min(width, height) * 0.08));
+    // Inclui o centro de massa nos limites para garantir que ele apareça
+    // corretamente no enquadramento da cena.
+    const bounds = getCoordinateBounds([
+        star,
+        planet,
+        centerOfMassTrajectory,
+    ]);
+
+    const padding = Math.min(
+        42,
+        Math.max(18, Math.min(width, height) * 0.08)
+    );
+
     const rect = {
         left: padding,
         top: padding,
@@ -381,10 +413,66 @@ function drawActualOrbitScene(ctx, width, height, data) {
         height: Math.max(1, height - padding * 2),
     };
 
-    drawPath(ctx, star, bounds, rect, "rgba(214, 165, 80, 0.55)", 1.2, index);
-    drawPath(ctx, planet, bounds, rect, "rgba(110, 170, 210, 0.55)", 1.3, index);
+    drawPath(
+        ctx,
+        star,
+        bounds,
+        rect,
+        "rgba(214, 165, 80, 0.55)",
+        1.2,
+        index
+    );
 
-    const [cx, cy] = mapPosition([0, 0], bounds, rect);
+    drawPath(
+        ctx,
+        planet,
+        bounds,
+        rect,
+        "rgba(110, 170, 210, 0.55)",
+        1.3,
+        index
+    );
+
+    // Usa o valor correspondente ao instante atual, retornado pelo servidor.
+    // Mantém um fallback para respostas antigas sem essa propriedade.
+    let centerOfMass;
+
+    if (
+        centerOfMassTrajectory.length > index &&
+        centerOfMassTrajectory[index].every(Number.isFinite)
+    ) {
+        centerOfMass = centerOfMassTrajectory[index];
+    } else {
+        const starMass = Number(data.star_mass_kg);
+        const planetMass = Number(data.planet_mass_kg);
+        const totalMass = starMass + planetMass;
+
+        if (
+            Number.isFinite(totalMass) &&
+            totalMass > 0 &&
+            Number.isFinite(starMass) &&
+            Number.isFinite(planetMass)
+        ) {
+            centerOfMass = [
+                (
+                    starMass * star[index][0] +
+                    planetMass * planet[index][0]
+                ) / totalMass,
+                (
+                    starMass * star[index][1] +
+                    planetMass * planet[index][1]
+                ) / totalMass,
+            ];
+        } else {
+            // Fallback visual somente se a resposta não trouxer as massas.
+            centerOfMass = [
+                (star[index][0] + planet[index][0]) / 2,
+                (star[index][1] + planet[index][1]) / 2,
+            ];
+        }
+    }
+
+    const [cx, cy] = mapPosition(centerOfMass, bounds, rect);
     drawCenterOfMass(ctx, cx, cy);
 
     const [sx, sy] = mapPosition(star[index], bounds, rect);
@@ -396,6 +484,7 @@ function drawActualOrbitScene(ctx, width, height, data) {
     drawLabels(ctx, sx, sy, px, py, cx, cy);
 
     const seconds = Number(data.trajectory_times?.[index]) || 0;
+
     $("#simulation-time").textContent =
         `${(seconds / DAY_SECONDS).toFixed(2).padStart(6, "0")} DAYS`;
 
@@ -487,7 +576,11 @@ function drawChartGrid(ctx, width, height, options = {}) {
 
     ctx.fillStyle = COLORS.text;
     ctx.textAlign = "center";
-    ctx.fillText(options.xLabel || "TIME", margin.left + plotWidth / 2, height - 8);
+    ctx.fillText(
+        options.xLabel || "TIME",
+        margin.left + plotWidth / 2,
+        height - 8
+    );
 
     ctx.save();
     ctx.translate(13, margin.top + plotHeight / 2);
@@ -506,6 +599,7 @@ function drawChartGrid(ctx, width, height, options = {}) {
 
 function drawTrajectoryChart() {
     const { context: ctx, width, height } = setupCanvas(trajectoryCanvas);
+
     const plot = drawChartGrid(ctx, width, height, {
         xLabel: "X [AU]",
         yLabel: "Y [AU]",
@@ -572,6 +666,7 @@ function drawActualTrajectoryChart(ctx, plot, data) {
     if (!count) return;
 
     const bounds = getCoordinateBounds([star, planet]);
+
     const rect = {
         left: plot.left,
         top: plot.top,
@@ -634,6 +729,7 @@ function getChartSeries(selector, data) {
     };
 
     const config = mapping[selector];
+
     if (!config || !Array.isArray(config.values) || !config.values.length) {
         return null;
     }
@@ -710,6 +806,7 @@ function drawActualStateChart(ctx, plot, values) {
 
     const markerX =
         plot.left + index / Math.max(1, normalized.length - 1) * plot.width;
+
     const markerY = plot.top + (1 - normalized[index]) * plot.height;
 
     ctx.fillStyle = COLORS.blueBright;
@@ -800,18 +897,22 @@ const INSPECTOR_STYLE = `
 
 function formatExact(value, significantDigits = 10) {
     const number = Number(value);
+
     if (!Number.isFinite(number)) return "—";
     if (number === 0) return "0";
+
     return number.toExponential(significantDigits - 1);
 }
 
 function inspectorSeries(data) {
     const times = data?.trajectory_times || [];
     const count = times.length;
+
     const at = (values, index) => {
         if (!Array.isArray(values) || index >= values.length) return NaN;
         return scalarValue(values[index]);
     };
+
     const distance = data?.distance_history || [];
     const velocity = data?.velocity_history || [];
     const energy = data?.energy_history || [];
@@ -841,6 +942,7 @@ function setupDataInspector() {
 
     const panel = document.createElement("section");
     panel.id = "orbital-data-inspector";
+
     panel.innerHTML = `
         <div class="inspector-heading">
             <div>
@@ -863,6 +965,7 @@ function setupDataInspector() {
         </div>
         <p id="inspector-table-note">Values are taken from the simulation response. Displayed rows are sampled for performance; CSV export includes every returned step.</p>
     `;
+
     analysisPage.appendChild(panel);
 
     const tooltip = document.createElement("div");
@@ -874,6 +977,7 @@ function setupDataInspector() {
 
 function updateDataInspector(data) {
     setupDataInspector();
+
     const rows = inspectorSeries(data);
     const body = $("#inspector-table-body");
     const button = $("#export-data-button");
@@ -883,12 +987,14 @@ function updateDataInspector(data) {
 
     if (!rows.length) {
         body.innerHTML = '<tr><td colspan="6" class="inspector-empty">No simulation data available.</td></tr>';
+
         if (button) button.disabled = true;
         return;
     }
 
     const maxVisibleRows = 250;
     const stride = Math.max(1, Math.ceil(rows.length / maxVisibleRows));
+
     const visible = rows.filter(
         (row, index) => index % stride === 0 || index === rows.length - 1
     );
@@ -914,6 +1020,7 @@ function updateDataInspector(data) {
 
 function exportSimulationCSV() {
     const data = state.simulationData;
+
     if (!data?.trajectory_times?.length) return;
 
     const rows = inspectorSeries(data);
@@ -922,6 +1029,7 @@ function exportSimulationCSV() {
         if (Array.isArray(value)) return `"${value.join(";")}"`;
 
         const text = String(value ?? "");
+
         return /[",\r\n]/.test(text)
             ? `"${text.replace(/"/g, '""')}"`
             : text;
@@ -1024,10 +1132,16 @@ function showChartTooltip(canvas, event) {
     if (canvas === trajectoryCanvas || canvas === orbitCanvas) {
         const star = data.trajectory_star?.[index] || [];
         const planet = data.trajectory_planet?.[index] || [];
+        const center = data.trajectory_center_of_mass?.[index] || [];
 
         details = `
             <div>Star X/Y: ${formatExact(star[0])} / ${formatExact(star[1])} m</div>
-            <div>Planet X/Y: ${formatExact(planet[0])} / ${formatExact(planet[1])} m</div>`;
+            <div>Planet X/Y: ${formatExact(planet[0])} / ${formatExact(planet[1])} m</div>
+            ${
+                center.length >= 2
+                    ? `<div>COM X/Y: ${formatExact(center[0])} / ${formatExact(center[1])} m</div>`
+                    : ""
+            }`;
     } else {
         const selector = $("#state-selector")?.value || "distance";
 
@@ -1039,6 +1153,7 @@ function showChartTooltip(canvas, event) {
         };
 
         const selected = labels[selector] || labels.distance;
+
         details = `<div>${selected[0]}: ${formatExact(selected[1])} ${selected[2]}</div>`;
     }
 
@@ -1072,6 +1187,7 @@ function installChartTooltips() {
 
         canvas.addEventListener("pointerleave", () => {
             const tooltip = $("#orbital-chart-tooltip");
+
             if (tooltip) tooltip.style.display = "none";
         });
     });
@@ -1212,6 +1328,7 @@ async function runExperiment() {
         renderAll();
 
         const playButton = $("#play-button");
+
         if (playButton) playButton.disabled = false;
 
         setRunStatus(

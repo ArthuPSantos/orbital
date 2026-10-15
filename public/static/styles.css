@@ -1,0 +1,1257 @@
+
+:root {
+    color-scheme: dark;
+    --background: #070a0e;
+    --panel: #0c1117;
+    --panel-raised: #0e141b;
+    --simulation: #05080b;
+    --border: #1b252e;
+    --border-strong: #27313c;
+    --text: #d9e1e8;
+    --text-bright: #f2f5f7;
+    --muted: #7f8c98;
+    --dim: #687582;
+    --blue: #6f9eb5;
+    --blue-bright: #8bb8d0;
+    --gold: #d6a550;
+    --green: #6fae8b;
+    --radius: 5px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-width: 320px;
+    min-height: 100%;
+    background: var(--background);
+}
+
+body {
+    margin: 0;
+    color: var(--text);
+    background: var(--background);
+    font-family: "Segoe UI", Inter, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button,
+select {
+    cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 1px solid var(--blue);
+    outline-offset: 2px;
+}
+
+.app-shell {
+    width: 100%;
+    max-width: 1920px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    min-height: 104px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.brand-name {
+    color: var(--text-bright);
+    font-size: 25px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 3px;
+}
+
+.brand-subtitle {
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 2px;
+}
+
+.system-status,
+.live-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.1px;
+    white-space: nowrap;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 9px #6fae8b33;
+}
+
+.tabs {
+    display: flex;
+    gap: 34px;
+    min-height: 55px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tab {
+    position: relative;
+    padding: 0 3px;
+    border: 0;
+    background: transparent;
+    color: var(--dim);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.3px;
+    transition: color 160ms ease;
+}
+
+.tab:hover {
+    color: var(--text);
+}
+
+.tab.active {
+    color: var(--text-bright);
+}
+
+.tab.active::after {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: 2px;
+    background: var(--blue);
+    content: "";
+}
+
+.page {
+    display: none;
+    padding: 24px 0 28px;
+    animation: appear 180ms ease-out;
+}
+
+.page.active {
+    display: block;
+}
+
+@keyframes appear {
+    from { opacity: 0.6; }
+    to { opacity: 1; }
+}
+
+.panel {
+    min-width: 0;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.lab-layout {
+    display: grid;
+    grid-template-columns: minmax(275px, 330px) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 20px;
+}
+
+.experiment-panel {
+    padding: 22px 20px 18px;
+}
+
+.section-heading {
+    margin-bottom: 20px;
+}
+
+.section-heading h2,
+.workspace-heading h2,
+.chart-heading h2 {
+    margin: 5px 0 0;
+    color: var(--text-bright);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+}
+
+.eyebrow {
+    display: block;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    line-height: 1.5;
+}
+
+.body-card {
+    padding: 14px 13px;
+    margin-bottom: 12px;
+    background: #0a0f14;
+    border: 1px solid #202b35;
+    border-radius: 4px;
+}
+
+.body-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.body-symbol {
+    display: block;
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border-radius: 50%;
+}
+
+.star-symbol {
+    background: var(--gold);
+    box-shadow: 0 0 11px #d6a55055;
+}
+
+.planet-symbol {
+    background: var(--blue);
+    box-shadow: 0 0 11px #6f9eb555;
+}
+
+.body-name {
+    color: var(--text);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.body-description {
+    margin-top: 2px;
+    color: var(--dim);
+    font-size: 11px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.field-with-unit {
+    display: flex;
+    min-width: 0;
+    height: 36px;
+    background: #0d131a;
+    border: 1px solid #202b35;
+    border-radius: 3px;
+    transition: border-color 140ms ease;
+}
+
+.field-with-unit:focus-within {
+    border-color: #4c6478;
+}
+
+input,
+select {
+    min-width: 0;
+    color: var(--text);
+    background: #0d131a;
+    border: 1px solid #202b35;
+    border-radius: 3px;
+}
+
+.field-with-unit input {
+    width: 40%;
+    flex: 1 1 auto;
+    padding: 0 10px;
+    border: 0;
+    background: transparent;
+    outline: none;
+    font-variant-numeric: tabular-nums;
+}
+
+.field-with-unit select {
+    width: 46%;
+    max-width: 145px;
+    padding: 0 22px 0 8px;
+    border: 0;
+    border-left: 1px solid #202b35;
+    border-radius: 0;
+    background-color: transparent;
+    color: #aab6c0;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-overflow: ellipsis;
+}
+
+.section-divider {
+    height: 1px;
+    margin: 21px 0;
+    background: var(--border);
+}
+
+.section-heading.compact {
+    margin-bottom: 17px;
+}
+
+.form-field {
+    margin-bottom: 15px;
+}
+
+.full-select {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    color: #b5c0ca;
+    font-size: 10px;
+    letter-spacing: 0.3px;
+}
+
+input:hover,
+select:hover {
+    border-color: #34424f;
+}
+
+.primary-button {
+    width: 100%;
+    min-height: 42px;
+    margin-top: 5px;
+    padding: 0 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #18242e;
+    border: 1px solid #334451;
+    border-radius: 3px;
+    color: #dbe5ec;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: background 150ms ease, border-color 150ms ease;
+}
+
+.primary-button:hover {
+    background: #21313e;
+    border-color: #4b6577;
+}
+
+.primary-button:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
+.button-arrow {
+    font-size: 16px;
+    color: var(--blue-bright);
+}
+
+.panel-note {
+    margin: 12px 0 0;
+    color: var(--dim);
+    font-size: 8px;
+    line-height: 1.6;
+    letter-spacing: 0.6px;
+}
+
+.lab-workspace {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.simulation-panel {
+    min-height: 510px;
+    padding: 19px;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+.workspace-heading,
+.chart-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.workspace-heading {
+    padding-bottom: 16px;
+}
+
+.workspace-heading h2 {
+    font-size: 14px;
+}
+
+.simulation-stage {
+    position: relative;
+    min-height: 350px;
+    flex: 1 1 auto;
+    overflow: hidden;
+    background: var(--simulation);
+    border: 1px solid #151e26;
+    border-radius: 3px;
+}
+
+#orbit-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 350px;
+}
+
+.canvas-overlay {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    pointer-events: none;
+}
+
+.top-left {
+    top: 17px;
+    left: 17px;
+}
+
+.bottom-left {
+    bottom: 16px;
+    left: 17px;
+}
+
+.bottom-right {
+    right: 17px;
+    bottom: 16px;
+    text-align: right;
+}
+
+.overlay-label {
+    color: #687582;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 1.1px;
+}
+
+.overlay-value {
+    color: #b8c4ce;
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
+}
+
+.simulation-controls {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    padding-top: 15px;
+}
+
+.playback-buttons {
+    display: flex;
+    gap: 7px;
+}
+
+.icon-button {
+    width: 31px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    background: #10161d;
+    border: 1px solid #27313c;
+    border-radius: 3px;
+    color: #b5c4cf;
+    font-size: 13px;
+}
+
+.icon-button:hover {
+    background: #19232c;
+    color: var(--text-bright);
+}
+
+.timeline {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--dim);
+    font-size: 9px;
+    letter-spacing: 0.5px;
+}
+
+.timeline-track {
+    height: 3px;
+    flex: 1;
+    overflow: hidden;
+    background: #202a33;
+    border-radius: 5px;
+}
+
+#timeline-progress {
+    width: 0;
+    height: 100%;
+    background: var(--blue);
+    transition: width 100ms linear;
+}
+
+.preview-speed {
+    color: var(--muted);
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.metric-card {
+    min-height: 99px;
+    padding: 15px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.metric-label {
+    color: var(--muted);
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.7px;
+    line-height: 1.4;
+}
+
+.metric-card strong {
+    color: var(--text-bright);
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.metric-unit {
+    color: var(--dim);
+    font-size: 8px;
+    letter-spacing: 0.6px;
+}
+
+/* Analysis */
+
+.analysis-layout {
+    min-height: 690px;
+    display: grid;
+    grid-template-rows: minmax(330px, 1.1fr) minmax(280px, 0.9fr);
+    gap: 17px;
+}
+
+.chart-panel {
+    min-height: 0;
+    padding: 19px 21px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-heading {
+    min-height: 43px;
+    flex: 0 0 auto;
+}
+
+.chart-heading h2 {
+    font-size: 14px;
+}
+
+.chart-unit {
+    color: var(--dim);
+    font-size: 9px;
+    letter-spacing: 0.7px;
+}
+
+.chart-area {
+    position: relative;
+    min-height: 180px;
+    flex: 1 1 auto;
+    margin-top: 10px;
+}
+
+.chart-area canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.chart-legend {
+    min-height: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: 0.6px;
+}
+
+.chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-dot {
+    width: 7px;
+    height: 7px;
+    display: inline-block;
+    border-radius: 50%;
+}
+
+.star-legend {
+    background: var(--gold);
+}
+
+.planet-legend {
+    background: var(--blue);
+}
+
+.state-selector {
+    width: 205px;
+    max-width: 55%;
+    height: 35px;
+    padding: 0 10px;
+    color: #b5c0ca;
+    font-size: 10px;
+    letter-spacing: 0.6px;
+}
+
+.chart-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 8px;
+    color: var(--dim);
+    font-size: 9px;
+    letter-spacing: 0.7px;
+}
+
+.preview-notice {
+    margin: 14px 0 0;
+    color: var(--dim);
+    font-size: 10px;
+}
+
+/* Guide */
+
+.guide-intro {
+    max-width: 760px;
+    padding: 10px 0 25px;
+}
+
+.guide-intro h1 {
+    margin: 8px 0 9px;
+    color: var(--text-bright);
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}
+
+.guide-intro p {
+    max-width: 620px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.guide-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.guide-card {
+    position: relative;
+    min-height: 205px;
+    padding: 22px 20px;
+    overflow: hidden;
+}
+
+.guide-number {
+    position: absolute;
+    top: 14px;
+    right: 17px;
+    color: #273541;
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: -1px;
+}
+
+.guide-card .eyebrow {
+    margin-top: 14px;
+    color: var(--blue);
+}
+
+.guide-card h2 {
+    margin: 10px 0 10px;
+    color: var(--text-bright);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.guide-card p {
+    max-width: 420px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.9;
+}
+
+.interpretation-note {
+    margin-top: 17px;
+    padding: 19px 21px;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    background: #0a1016;
+}
+
+.note-symbol {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #3b5263;
+    border-radius: 50%;
+    color: var(--blue-bright);
+    font-family: Georgia, serif;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.interpretation-note p {
+    max-width: 850px;
+    margin: 7px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+.guide-footer,
+.app-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    color: var(--dim);
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.guide-footer {
+    margin-top: 25px;
+    padding-top: 17px;
+    border-top: 1px solid var(--border);
+}
+
+.guide-footer span:first-child {
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.app-footer {
+    min-height: 48px;
+    margin-top: auto;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    font-size: 8px;
+    letter-spacing: 0.9px;
+}
+
+.footer-divider {
+    margin: 0 5px;
+    color: #35424d;
+}
+
+/* Responsive layouts */
+
+@media (min-width: 1600px) {
+    .app-shell {
+        padding-right: 40px;
+        padding-left: 40px;
+    }
+
+    .lab-layout {
+        grid-template-columns: 350px minmax(0, 1fr);
+        gap: 23px;
+    }
+
+    .simulation-panel {
+        min-height: 590px;
+        padding: 22px;
+    }
+
+    .simulation-stage,
+    #orbit-canvas {
+        min-height: 420px;
+    }
+
+    .metric-card {
+        min-height: 110px;
+        padding: 17px;
+    }
+
+    .analysis-layout {
+        min-height: 760px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .app-shell {
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    .lab-layout {
+        grid-template-columns: minmax(255px, 295px) minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .experiment-panel {
+        padding: 18px 14px;
+    }
+
+    .simulation-panel {
+        padding: 14px;
+        min-height: 450px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .guide-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .app-shell {
+        padding: 0 14px;
+    }
+
+    .topbar {
+        min-height: 86px;
+    }
+
+    .brand-name {
+        font-size: 22px;
+    }
+
+    .brand-subtitle {
+        max-width: 230px;
+        font-size: 7px;
+        letter-spacing: 1.2px;
+    }
+
+    .system-status {
+        gap: 6px;
+        font-size: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .tabs {
+        min-height: 48px;
+        gap: 26px;
+    }
+
+    .page {
+        padding-top: 16px;
+    }
+
+    .lab-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .experiment-panel {
+        order: 2;
+        padding: 18px;
+    }
+
+    .lab-workspace {
+        order: 1;
+    }
+
+    .simulation-panel {
+        min-height: 400px;
+    }
+
+    .simulation-stage,
+    #orbit-canvas {
+        min-height: 300px;
+    }
+
+    .simulation-controls {
+        gap: 10px;
+    }
+
+    .preview-speed {
+        font-size: 8px;
+    }
+
+    .analysis-layout {
+        min-height: 750px;
+        grid-template-rows: minmax(310px, 1fr) minmax(300px, 1fr);
+        gap: 12px;
+    }
+
+    .chart-panel {
+        padding: 15px 12px 12px;
+    }
+
+    .state-selector {
+        width: 170px;
+        font-size: 9px;
+    }
+
+    .guide-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .guide-card {
+        min-height: 175px;
+    }
+
+    .guide-intro h1 {
+        font-size: 23px;
+    }
+
+    .app-footer,
+    .guide-footer {
+        font-size: 7px;
+        letter-spacing: 0.4px;
+    }
+}
+
+@media (max-width: 420px) {
+    .brand-subtitle {
+        max-width: 190px;
+        font-size: 6px;
+    }
+
+    .system-status {
+        font-size: 0;
+    }
+
+    .system-status .status-dot {
+        width: 7px;
+        height: 7px;
+    }
+
+    .metrics-grid {
+        gap: 8px;
+    }
+
+    .metric-card {
+        padding: 12px 10px;
+    }
+
+    .metric-label {
+        font-size: 7px;
+    }
+
+    .metric-card strong {
+        font-size: 17px;
+    }
+
+    .chart-legend {
+        gap: 12px;
+        font-size: 8px;
+    }
+
+    .app-footer span:last-child {
+        text-align: right;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+/* =========================================
+   ORBITAL — LEGIBILIDADE E ACESSIBILIDADE
+   ========================================= */
+
+:root {
+    --text: #e0e7ed;
+    --text-bright: #f5f7fa;
+    --muted: #aab7c3;
+    --dim: #93a1ae;
+}
+
+body {
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.brand-name {
+    font-size: 28px;
+}
+
+.brand-subtitle {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+}
+
+.system-status,
+.live-label {
+    font-size: 12px;
+    letter-spacing: 0.7px;
+}
+
+.tabs {
+    gap: 38px;
+}
+
+.tab {
+    min-height: 55px;
+    font-size: 14px;
+    letter-spacing: 0.8px;
+}
+
+.section-heading h2,
+.workspace-heading h2,
+.chart-heading h2 {
+    font-size: 17px;
+}
+
+.eyebrow {
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.body-name {
+    font-size: 14px;
+    letter-spacing: 0.4px;
+}
+
+.body-description {
+    font-size: 13px;
+}
+
+label {
+    color: #c1ccd5;
+    font-size: 14px;
+    margin-bottom: 7px;
+}
+
+.field-with-unit {
+    min-height: 42px;
+    height: 42px;
+}
+
+.field-with-unit input {
+    font-size: 15px;
+}
+
+.field-with-unit select {
+    font-size: 12px;
+    letter-spacing: 0;
+}
+
+.full-select {
+    height: 42px;
+    font-size: 13px;
+}
+
+.primary-button {
+    min-height: 48px;
+    font-size: 13px;
+    letter-spacing: 0.6px;
+}
+
+.panel-note {
+    color: #a0adb9;
+    font-size: 11px;
+    letter-spacing: 0.2px;
+}
+
+.overlay-label {
+    color: #a0adb9;
+    font-size: 11px;
+    letter-spacing: 0.7px;
+}
+
+.overlay-value {
+    color: #e0e7ed;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+}
+
+.simulation-controls {
+    gap: 20px;
+}
+
+.icon-button {
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+}
+
+.timeline {
+    font-size: 12px;
+    letter-spacing: 0.2px;
+}
+
+.preview-speed {
+    font-size: 12px;
+}
+
+.metric-card {
+    min-height: 112px;
+    gap: 10px;
+}
+
+.metric-label {
+    color: #bdc8d2;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+}
+
+.metric-card strong {
+    font-size: 22px;
+}
+
+.metric-unit {
+    color: #a0adb9;
+    font-size: 11px;
+    letter-spacing: 0.2px;
+}
+
+.chart-heading h2 {
+    font-size: 16px;
+}
+
+.chart-unit {
+    color: #a0adb9;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+}
+
+.chart-legend {
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    gap: 18px;
+}
+
+.state-selector {
+    height: 42px;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+}
+
+.chart-footer {
+    color: #a0adb9;
+    font-size: 11px;
+    letter-spacing: 0.2px;
+}
+
+.preview-notice {
+    color: #a0adb9;
+    font-size: 12px;
+}
+
+.guide-intro p {
+    color: #bdc8d2;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.guide-card .eyebrow {
+    font-size: 12px;
+}
+
+.guide-card h2 {
+    font-size: 17px;
+}
+
+.guide-card p {
+    color: #bdc8d2;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.interpretation-note p {
+    color: #bdc8d2;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.guide-footer {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+.app-footer {
+    font-size: 10px;
+    letter-spacing: 0.4px;
+}
+
+@media (max-width: 700px) {
+    .app-shell {
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .tabs {
+        gap: 22px;
+    }
+
+    .tab {
+        font-size: 12px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .guide-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field-with-unit select {
+        max-width: 48%;
+    }
+
+    .guide-footer,
+    .app-footer {
+        flex-wrap: wrap;
+    }
+}

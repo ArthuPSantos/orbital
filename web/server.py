@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parent.parent
 APP_DIR = ROOT / "app"
-STATIC_DIR = ROOT / "web" / "static"
+STATIC_DIR = ROOT / "public"
 
 for directory in (ROOT / "src", APP_DIR):
     path = str(directory)
@@ -29,7 +29,7 @@ app = FastAPI(
 
 app.mount(
     "/static",
-    StaticFiles(directory=str(STATIC_DIR)),
+    StaticFiles(directory=str(STATIC_DIR / "static")),
     name="static",
 )
 
@@ -110,13 +110,28 @@ def simulate(request: SimulationRequest):
 
         result = run_manual_experiment(config)
 
+        star_positions = result["trajectory_star"]
+        planet_positions = result["trajectory_planet"]
+
+        total_mass = config.star_mass_kg + config.planet_mass_kg
+
+        trajectory_center_of_mass = (
+            config.star_mass_kg * star_positions
+            + config.planet_mass_kg * planet_positions
+        ) / total_mass
+
         return {
             "steps": result["steps"],
             "computation_time": result["computation_time"],
             "energy_error": result["energy_error"],
             "angular_momentum_error": result["angular_momentum_error"],
-            "trajectory_star": result["trajectory_star"].tolist(),
-            "trajectory_planet": result["trajectory_planet"].tolist(),
+            "star_mass_kg": config.star_mass_kg,
+            "planet_mass_kg": config.planet_mass_kg,
+            "trajectory_star": star_positions.tolist(),
+            "trajectory_planet": planet_positions.tolist(),
+            "trajectory_center_of_mass": (
+                trajectory_center_of_mass.tolist()
+            ),
             "trajectory_velocity": result["trajectory_velocity"].tolist(),
             "trajectory_times": result["trajectory_times"].tolist(),
             "energy_history": result["energy_history"].tolist(),

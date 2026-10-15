@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#070a0e">
+    <meta name="description" content="ORBITAL — Computational Gravitational Laboratory">
+    <title>ORBITAL — Computational Laboratory</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <main class="app-shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-name">ORBITAL</div>
+                <div class="brand-subtitle">COMPUTATIONAL GRAVITATIONAL LABORATORY</div>
+            </div>
+            <div class="system-status">
+                <span class="status-dot"></span>
+                SYSTEM READY
+            </div>
+        </header>
+
+        <nav class="tabs" aria-label="Main navigation">
+            <button class="tab active" data-tab="laboratory">LABORATORY</button>
+            <button class="tab" data-tab="analysis">ANALYSIS</button>
+            <button class="tab" data-tab="guide">GUIDE</button>
+        </nav>
+
+        <section class="page active" id="laboratory">
+            <div class="lab-layout">
+                <aside class="experiment-panel panel">
+                    <div class="section-heading">
+                        <span class="eyebrow">CONFIGURATION</span>
+                        <h2>Experiment setup</h2>
+                    </div>
+
+                    <div class="body-card">
+                        <div class="body-card-heading">
+                            <span class="body-symbol star-symbol"></span>
+                            <div>
+                                <div class="body-name">PRIMARY BODY</div>
+                                <div class="body-description">Central star</div>
+                            </div>
+                        </div>
+                        <label for="star-mass">Mass</label>
+                        <div class="field-with-unit">
+                            <input id="star-mass" type="number" value="1.0" min="0.000001" step="any">
+                            <select id="star-mass-unit" aria-label="Primary mass unit">
+                                <option value="SOLAR MASSES">SOLAR MASSES</option>
+                                <option value="KG">KG</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="body-card">
+                        <div class="body-card-heading">
+                            <span class="body-symbol planet-symbol"></span>
+                            <div>
+                                <div class="body-name">SECONDARY BODY</div>
+                                <div class="body-description">Orbiting planet</div>
+                            </div>
+                        </div>
+                        <label for="planet-mass">Mass</label>
+                        <div class="field-with-unit">
+                            <input id="planet-mass" type="number" value="1.0" min="0.000001" step="any">
+                            <select id="planet-mass-unit" aria-label="Secondary mass unit">
+                                <option value="EARTH MASSES">EARTH MASSES</option>
+                                <option value="SOLAR MASSES">SOLAR MASSES</option>
+                                <option value="KG">KG</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+                    <div class="section-heading compact">
+                        <span class="eyebrow">INITIAL CONDITIONS</span>
+                        <h2>Orbital parameters</h2>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="distance">Initial distance</label>
+                        <div class="field-with-unit">
+                            <input id="distance" type="number" value="1.0" min="0.000001" step="any">
+                            <select id="distance-unit" aria-label="Distance unit">
+                                <option value="AU">AU</option>
+                                <option value="KM">KM</option>
+                                <option value="M">M</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="velocity">Initial velocity</label>
+                        <div class="field-with-unit">
+                            <input id="velocity" type="number" value="29.78" min="0" step="any">
+                            <select id="velocity-unit" aria-label="Velocity unit">
+                                <option value="KM/S">KM/S</option>
+                                <option value="M/S">M/S</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="duration">Simulation duration</label>
+                        <div class="field-with-unit">
+                            <input id="duration" type="number" value="1" min="0.000001" step="any">
+                            <select id="duration-unit" aria-label="Duration unit">
+                                <option value="YEAR">YEAR</option>
+                                <option value="MONTH">MONTH</option>
+                                <option value="DAY">DAY</option>
+                                <option value="HOUR">HOUR</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="precision">Numerical precision</label>
+                        <select id="precision" class="full-select">
+                            <option value="FAST">FAST</option>
+                            <option value="BALANCED" selected>BALANCED</option>
+                            <option value="HIGH">HIGH</option>
+                            <option value="CUSTOM">CUSTOM</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="speed">Animation speed</label>
+                        <select id="speed" class="full-select">
+                            <option value="1">1× REAL TIME</option>
+                            <option value="2">2× REAL TIME</option>
+                            <option value="4" selected>4× REAL TIME</option>
+                            <option value="8">8× REAL TIME</option>
+                            <option value="16">16× REAL TIME</option>
+                            <option value="32">32× REAL TIME</option>
+                        </select>
+                    </div>
+
+                    <button id="run-button" class="primary-button">
+                        <span>RUN EXPERIMENT</span>
+                        <span class="button-arrow">↗</span>
+                    </button>
+                    <p class="panel-note">WEB PREVIEW · SIMULATION ENGINE NOT CONNECTED</p>
+                </aside>
+
+                <div class="lab-workspace">
+                    <section class="simulation-panel panel">
+                        <div class="workspace-heading">
+                            <div>
+                                <span class="eyebrow">LIVE SIMULATION</span>
+                                <h2>Orbital system</h2>
+                            </div>
+                            <span class="live-label"><span class="status-dot"></span> PREVIEW</span>
+                        </div>
+
+                        <div class="simulation-stage">
+                            <canvas id="orbit-canvas" aria-label="Animated orbital system preview"></canvas>
+                            <div class="canvas-overlay top-left">
+                                <span class="overlay-label">SYSTEM FRAME</span>
+                                <span class="overlay-value">BARYCENTRIC</span>
+                            </div>
+                            <div class="canvas-overlay bottom-left">
+                                <span class="overlay-label">SIMULATION TIME</span>
+                                <span class="overlay-value" id="simulation-time">000.00 DAYS</span>
+                            </div>
+                            <div class="canvas-overlay bottom-right">
+                                <span class="overlay-label">SEPARATION</span>
+                                <span class="overlay-value" id="simulation-distance">1.000 AU</span>
+                            </div>
+                        </div>
+
+                        <div class="simulation-controls">
+                            <div class="playback-buttons">
+                                <button class="icon-button" id="play-button" aria-label="Pause animation">Ⅱ</button>
+                                <button class="icon-button" id="reset-button" aria-label="Reset animation">↺</button>
+                            </div>
+                            <div class="timeline">
+                                <span>TIME</span>
+                                <div class="timeline-track"><div id="timeline-progress"></div></div>
+                                <span id="timeline-percent">00%</span>
+                            </div>
+                            <span class="preview-speed" id="speed-label">4× SPEED</span>
+                        </div>
+                    </section>
+
+                    <section class="metrics-grid">
+                        <div class="metric-card panel">
+                            <span class="metric-label">ENERGY ERROR</span>
+                            <strong>—</strong>
+                            <span class="metric-unit">RELATIVE ERROR</span>
+                        </div>
+                        <div class="metric-card panel">
+                            <span class="metric-label">ANGULAR MOMENTUM</span>
+                            <strong>—</strong>
+                            <span class="metric-unit">RELATIVE ERROR</span>
+                        </div>
+                        <div class="metric-card panel">
+                            <span class="metric-label">COMPUTATION TIME</span>
+                            <strong>—</strong>
+                            <span class="metric-unit">SECONDS</span>
+                        </div>
+                        <div class="metric-card panel">
+                            <span class="metric-label">INTEGRATION STEPS</span>
+                            <strong>—</strong>
+                            <span class="metric-unit">TOTAL STEPS</span>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+
+        <section class="page" id="analysis">
+            <div class="analysis-layout">
+                <section class="chart-panel panel trajectory-panel">
+                    <div class="chart-heading">
+                        <div>
+                            <span class="eyebrow">SPATIAL DYNAMICS</span>
+                            <h2>Trajectory</h2>
+                        </div>
+                        <span class="chart-unit">POSITION · AU</span>
+                    </div>
+                    <div class="trajectory-chart chart-area">
+                        <canvas id="trajectory-chart" aria-label="Preview of orbital trajectories"></canvas>
+                    </div>
+                    <div class="chart-legend">
+                        <span><i class="legend-dot star-legend"></i> PRIMARY BODY</span>
+                        <span><i class="legend-dot planet-legend"></i> SECONDARY BODY</span>
+                    </div>
+                </section>
+
+                <section class="chart-panel panel state-panel">
+                    <div class="chart-heading state-heading">
+                        <div>
+                            <span class="eyebrow">SYSTEM EVOLUTION</span>
+                            <h2>Physical state</h2>
+                        </div>
+                        <select id="state-selector" class="state-selector" aria-label="Physical state variable">
+                            <option value="distance">DISTANCE</option>
+                            <option value="velocity">VELOCITY</option>
+                            <option value="energy">ENERGY</option>
+                            <option value="angular">ANGULAR MOMENTUM</option>
+                        </select>
+                    </div>
+                    <div class="state-chart chart-area">
+                        <canvas id="state-chart" aria-label="Preview of physical state over time"></canvas>
+                    </div>
+                    <div class="chart-footer">
+                        <span id="state-axis-label">DISTANCE [AU]</span>
+                        <span>TIME →</span>
+                    </div>
+                </section>
+            </div>
+            <p class="preview-notice">Charts are illustrative previews. Run the connected simulation to display calculated results.</p>
+        </section>
+
+        <section class="page" id="guide">
+            <div class="guide-intro">
+                <span class="eyebrow">DOCUMENTATION</span>
+                <h1>Simulation guide</h1>
+                <p>Explore the physical model, experiment parameters and numerical diagnostics used by ORBITAL.</p>
+            </div>
+
+            <div class="guide-grid">
+                <article class="guide-card panel">
+                    <span class="guide-number">01</span>
+                    <span class="eyebrow">QUICK START</span>
+                    <h2>Getting started</h2>
+                    <p>Configure the primary and secondary bodies, choose the initial orbital conditions and set the simulation duration.</p>
+                </article>
+                <article class="guide-card panel">
+                    <span class="guide-number">02</span>
+                    <span class="eyebrow">PHYSICS</span>
+                    <h2>Physical model</h2>
+                    <p>Model gravitational interactions using Newtonian mechanics and a numerical integration method designed for orbital dynamics.</p>
+                </article>
+                <article class="guide-card panel">
+                    <span class="guide-number">03</span>
+                    <span class="eyebrow">CONFIGURATION</span>
+                    <h2>Parameters & units</h2>
+                    <p>Mass, distance, velocity and duration can be configured using the units available in the experiment panel.</p>
+                </article>
+                <article class="guide-card panel">
+                    <span class="guide-number">04</span>
+                    <span class="eyebrow">GEOMETRY</span>
+                    <h2>Trajectory</h2>
+                    <p>Inspect the motion of both bodies in the XY plane. The analysis view expresses positions in astronomical units.</p>
+                </article>
+                <article class="guide-card panel">
+                    <span class="guide-number">05</span>
+                    <span class="eyebrow">TIME SERIES</span>
+                    <h2>Physical state</h2>
+                    <p>Track distance, velocity, total energy and angular momentum throughout the integration interval.</p>
+                </article>
+                <article class="guide-card panel">
+                    <span class="guide-number">06</span>
+                    <span class="eyebrow">VALIDATION</span>
+                    <h2>Numerical metrics</h2>
+                    <p>Use relative errors, computation time and integration step count to evaluate a simulation's numerical behavior.</p>
+                </article>
+            </div>
+
+            <aside class="interpretation-note panel">
+                <span class="note-symbol">i</span>
+                <div>
+                    <span class="eyebrow">INTERPRETATION NOTE</span>
+                    <p>Numerical results depend on the initial conditions, integration step and duration. Small conservation errors are useful diagnostics, but should always be interpreted in context.</p>
+                </div>
+            </aside>
+
+            <footer class="guide-footer">
+                <span>ORBITAL</span>
+                <span>COMPUTATIONAL GRAVITATIONAL LABORATORY</span>
+            </footer>
+        </section>
+
+        <footer class="app-footer">
+            <span>ORBITAL <span class="footer-divider">/</span> WEB INTERFACE</span>
+            <span>COMPUTATIONAL GRAVITATIONAL LABORATORY</span>
+        </footer>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
