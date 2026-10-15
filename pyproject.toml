@@ -5,6 +5,8 @@ description = "Computational laboratory for gravitational systems"
 requires-python = ">=3.12"
 dependencies = [
     "numpy",
+    "fastapi",
+    "uvicorn[standard]",
 ]
 
 [project.optional-dependencies]
